@@ -1,0 +1,1671 @@
+/* ........................................................... -*- java -*-
+ * FILE: TSQL2Grammar.jjt (derived from SqlSqcipt.jjt)                   *
+ *                                                                       *
+ * DESCRIPTION: This file contains grammar for TSQL2Adapter JDBC adapter *
+ *				from tsql2lib library. tsql2lib is library implementing  *
+ *				JDBC API to add support of temporal data to relational   *
+ *              database created as masters thesis work by Jiri Tomek    *
+ *              as Brno University of Technology - Faculty of            *
+ *				Information Technology.                                  *
+ *                                                                       *
+ * HISTORY: 07-APR-1997 Created  Ramanathan .S (sramji@rocketmail.com)   *
+ *          11-JAN-2003 modified Guido Draheim (guidod@gmx.de)           *
+ *                                                                       *
+ * MODIFIED: 15-MAY-2009 Jiri Tomek (katulus@volny.cz)                   *
+ *           Added TSQL2 extension to SQL grammar and removed parts      *
+ *           not supported by tsql2lib and TSQL2Adapter.                 *
+ * ..................................................................... */
+
+
+options{
+    IGNORE_CASE=true ;
+    UNICODE_INPUT=true ;
+}
+
+PARSER_BEGIN(TSQL2Parser)
+
+package cz.vutbr.fit.tsql2lib.parser;
+
+public class TSQL2Parser {}
+
+PARSER_END(TSQL2Parser)
+
+
+SKIP:
+{
+    " "
+|   "\t"
+|   "\r"
+|   "\n"
+}
+
+/* Prefix      Meaning
+    -------------------
+    K_          Keyword
+    O_          Operator
+    S_          Substitutes
+*/
+
+TOKEN: /* SQL and TSQL Keywords. prefixed with K_ to avoid name clashes */
+{
+	    <K_ADD: "ADD">
+	|	<K_ALL: "ALL">
+	|	<K_ALTER: "ALTER">
+	|   <K_AUTO_INCREMENT: "AUTO_INCREMENT">
+	|	<K_AND: "AND">
+	|	<K_ANY: "ANY">
+	|	<K_ARE: "ARE">
+	|	<K_ARRAY: "ARRAY">
+	|	<K_AS: "AS">
+	|	<K_ASC: "ASC">
+	|	<K_ASENSITIVE: "ASENSITIVE">
+	|	<K_ASYMMETRIC: "ASYMMETRIC">
+	|	<K_AT: "AT">
+	|	<K_ATOMIC: "ATOMIC">
+	|	<K_AUTHORIZATION: "AUTHORIZATION">
+	|	<K_BEGIN: "BEGIN">
+	|	<K_BETWEEN: "BETWEEN">
+	|	<K_BIGINT: "BIGINT">
+	|	<K_BINARY: "BINARY">
+	|	<K_BINARY_INTEGER: "BINARY_INTEGER">
+	|	<K_BIT: "BIT">
+	|	<K_BLOB: "BLOB">
+	|	<K_BOOL: "BOOL">
+	|	<K_BOOLEAN: "BOOLEAN">
+	|	<K_BOTH: "BOTH">
+	|	<K_BY: "BY">
+	|	<K_CALENDRIC: "CALENDRIC">
+	|	<K_CALL: "CALL">
+	|	<K_CALLED: "CALLED">
+	|	<K_CASCADE: "CASCADE">
+	|	<K_CASE: "CASE">
+	|	<K_CAST: "CAST">
+	|	<K_CHAR: "CHAR">
+	|	<K_CHARACTER: "CHARACTER">
+	|	<K_CHECK: "CHECK">
+	|	<K_CLOB: "CLOB">
+	|	<K_CLOSE: "CLOSE">
+	|	<K_COLLATE: "COLLATE">
+	|	<K_COLUMN: "COLUMN">
+	|	<K_COLUMN_FORMAT: "COLUMN_FORMAT">
+	|	<K_COMMENT: "COMMENT">
+	|	<K_COMMIT: "COMMIT">
+	|	<K_CONNECT: "CONNECT">
+	|	<K_CONSTANT: "CONSTANT">
+	|	<K_CONSTRAINT: "CONSTRAINT">
+	|	<K_CONTAINS: "CONTAINS">
+	|	<K_CONTINUE: "CONTINUE">
+	|	<K_CORRESPONDING: "CORRESPONDING">
+	|	<K_CREATE: "CREATE">
+	|	<K_CREDIBILITY: "CREDIBILITY">
+	|	<K_CROSS: "CROSS">
+	|	<K_CUBE: "CUBE">
+	|	<K_CURRENT: "CURRENT">
+	|	<K_CURRENT_DATE: "CURRENT_DATE">
+	|	<K_CURRENT_DEFAULT_TRANSFORM_GROUP: "CURRENT_DEFAULT_TRANSFORM_GROUP">
+	|	<K_CURRENT_PATH: "CURRENT_PATH">
+	|	<K_CURRENT_ROLE: "CURRENT_ROLE">
+	|	<K_CURRENT_TIME: "CURRENT_TIME">
+	|	<K_CURRENT_TIMESTAMP: "CURRENT_TIMESTAMP">
+	|	<K_CURRENT_TRANSFORM_GROUP_FOR_TYPE: "CURRENT_TRANSFORM_GROUP_FOR_TYPE">
+	|	<K_CURRENT_USER: "CURRENT_USER">
+	|	<K_CURSOR: "CURSOR">
+	|	<K_CYCLE: "CYCLE">
+	|	<K_DATE: "DATE">
+	|	<K_DATETIME: "DATETIME">
+	|	<K_DAY: "DAY">
+	|	<K_DEALLOCATE: "DEALLOCATE">
+	|	<K_DEC: "DEC">
+	|	<K_DECIMAL: "DECIMAL">
+	|	<K_DECLARE: "DECLARE">
+	|	<K_DEFAULT: "DEFAULT">
+	|	<K_DELETE: "DELETE">
+	|	<K_DEREF: "DEREF">
+	|	<K_DESC: "DESC">
+	|	<K_DESCRIBE: "DESCRIBE">
+	|	<K_DETERMINISTIC: "DETERMINISTIC">
+	|	<K_DISCONNECT: "DISCONNECT">
+	|	<K_DISK: "DISK">
+	|	<K_DISTINCT: "DISTINCT">
+	|	<K_DISTRIBUTION: "DISTRIBUTION">
+	|	<K_DO: "DO">
+	|	<K_DOUBLE: "DOUBLE">
+	|	<K_DROP: "DROP">
+	|	<K_DYNAMIC: "DYNAMIC">
+	|	<K_EACH: "EACH">
+	|	<K_ELEMENT: "ELEMENT">
+	|	<K_ELSE: "ELSE">
+	|	<K_ELSIF: "ELSIF">
+	|	<K_END: "END">
+	|	<K_END_EXEC: "END-EXEC">
+	|	<K_ENUM: "ENUM">
+	|	<K_ESCAPE: "ESCAPE">
+	|	<K_EVENT: "EVENT">
+	|	<K_EXCEPT: "EXCEPT">
+	|	<K_EXCEPTION: "EXCEPTION">
+	|	<K_EXCEPTION_INIT: "EXCEPTION_INIT">
+	|	<K_EXCLUSIVE: "EXCLUSIVE">
+	|	<K_EXEC: "EXEC">
+	|	<K_EXECUTE: "EXECUTE">
+	|	<K_EXISTS: "EXISTS">
+	|	<K_EXIT: "EXIT">
+	|	<K_EXTERNAL: "EXTERNAL">
+	|	<K_FALSE: "FALSE">
+	|	<K_FETCH: "FETCH">
+	|	<K_FILTER: "FILTER">
+	|	<K_FIXED: "FIXED">
+	|	<K_FLOAT: "FLOAT">
+	|	<K_FOR: "FOR">
+	|	<K_FOREIGN: "FOREIGN">
+	|	<K_FOREVER: "FOREVER">
+	|	<K_FREE: "FREE">
+	|	<K_FROM: "FROM">
+	|	<K_FULL: "FULL">
+	|	<K_FUNCTION: "FUNCTION">
+	|	<K_GENERAL: "GENERAL">
+	|	<K_GET: "GET">
+	|	<K_GLOBAL: "GLOBAL">
+	|	<K_GOTO: "GOTO">
+	|	<K_GRANT: "GRANT">
+	|	<K_GROUP: "GROUP">
+	|	<K_GROUPING: "GROUPING">
+	|	<K_HAVING: "HAVING">
+	|	<K_HOLD: "HOLD">
+	|	<K_HOUR: "HOUR">
+	|	<K_IDENTITY: "IDENTITY">
+	|	<K_IF: "IF">
+	|	<K_IMMEDIATE: "IMMEDIATE">
+	|	<K_IN: "IN">
+	|	<K_INAPPLICABLE: "INAPPLICABLE">
+	|	<K_INDETERMINATE: "INDETERMINATE">
+	|	<K_INDEX: "INDEX">
+	|	<K_INDICATOR: "INDICATOR">
+	|	<K_INNER: "INNER">
+	|	<K_INOUT: "INOUT">
+	|	<K_INPUT: "INPUT">
+	|	<K_INSENSITIVE: "INSENSITIVE">
+	|	<K_INSERT: "INSERT">
+	|	<K_INT: "INT">
+	|	<K_INTEGER: "INTEGER">
+	|	<K_INTERSECT: "INTERSECT">
+	|	<K_INTERVAL: "INTERVAL">
+	|	<K_INTO: "INTO">
+	|	<K_IS: "IS">
+	|	<K_ISOLATION: "ISOLATION">
+	|	<K_JOIN: "JOIN">
+	|   <K_KEY: "KEY">
+	|	<K_LANGUAGE: "LANGUAGE">
+	|	<K_LARGE: "LARGE">
+	|	<K_LATERAL: "LATERAL">
+	|	<K_LEADING: "LEADING">
+	|	<K_LEFT: "LEFT">
+	|	<K_LEVEL: "LEVEL">
+	|	<K_LIKE: "LIKE">
+	|	<K_LOCAL: "LOCAL">
+	|	<K_LOCALTIME: "LOCALTIME">
+	|	<K_LOCALTIMESTAMP: "LOCALTIMESTAMP">
+	|	<K_LOCK: "LOCK">
+	|	<K_LOOP: "LOOP">
+	|	<K_MATCH: "MATCH">
+	|	<K_MEDIUMBLOB: "MEDIUMBLOB">
+	|	<K_MEDIUMINT: "MEDIUMINT">
+	|	<K_MEETS: "MEETS">
+	|	<K_MEMBER: "MEMBER">
+	|	<K_MEMORY: "MEMORY">
+	|	<K_MERGE: "MERGE">
+	|	<K_METHOD: "METHOD">
+	|	<K_MINUS: "MINUS">
+	|	<K_MINUTE: "MINUTE">
+	|	<K_MODE: "MODE">
+	|	<K_MODIFIES: "MODIFIES">
+	|	<K_MODULE: "MODULE">
+	|	<K_MONTH: "MONTH">
+	|	<K_MULTISET: "MULTISET">
+	|	<K_NATIONAL: "NATIONAL">
+	|	<K_NATURAL: "NATURAL">
+	|	<K_NCHAR: "NCHAR">
+	|	<K_NCLOB: "NCLOB">
+	|	<K_NEW: "NEW">
+	|	<K_NO: "NO">
+	|	<K_NOBIND: "NOBIND">
+	|	<K_NONE: "NONE">
+	|	<K_NONSTANDARD: "NONSTANDARD">
+	|	<K_NOT: "NOT">
+	|	<K_NOWAIT: "NOWAIT">
+	|	<K_NOW: "NOW">
+	|	<K_NULL: "NULL">
+	|	<K_NUMBER: "NUMBER">
+	|	<K_NUMERIC: "NUMERIC">
+	|	<K_OF: "OF">
+	|	<K_OLD: "OLD">
+	|	<K_ON: "ON">
+	|	<K_ONLY: "ONLY">
+	|	<K_OPEN: "OPEN">
+	|	<K_OR: "OR">
+	|	<K_ORDER: "ORDER">
+	|	<K_OTHERS: "OTHERS">
+	|	<K_OUT: "OUT">
+	|	<K_OUTER: "OUTER">
+	|	<K_OUTPUT: "OUTPUT">
+	|	<K_OVER: "OVER">
+	|	<K_OVERLAPS: "OVERLAPS">
+	|	<K_PACKAGE: "PACKAGE">
+	|	<K_PARAMETER: "PARAMETER">
+	|	<K_PARTITION: "PARTITION">
+	|	<K_PERIOD: "PERIOD">
+	|	<K_PLAUSIBILITY: "PLAUSIBILITY">
+	|	<K_POSITIVE: "POSITIVE">
+	|	<K_PRAGMA: "PRAGMA">
+	|	<K_PRECEDES: "PRECEDES">
+	|	<K_PRECISION: "PRECISION">
+	|	<K_PREPARE: "PREPARE">
+	|	<K_PREVIOUS: "PREVIOUS">
+	|	<K_PRIMARY: "PRIMARY">
+	|	<K_PRIOR: "PRIOR">
+	|	<K_PROCEDURE: "PROCEDURE">
+	|	<K_PROPERTIES: "PROPERTIES">
+	|	<K_RAISE: "RAISE">
+	|	<K_RANGE: "RANGE">
+	|	<K_READ: "READ">
+	|	<K_READS: "READS">
+	|	<K_REAL: "REAL">
+	|	<K_RECORD: "RECORD">
+	|	<K_RECURSIVE: "RECURSIVE">
+	|	<K_REF: "REF">
+	|	<K_REFERENCES: "REFERENCES">
+	|	<K_REFERENCING: "REFERENCING">
+	|	<K_RELEASE: "RELEASE">
+	|	<K_RETURN: "RETURN">
+	|	<K_RETURNS: "RETURNS">
+	|	<K_REVERSE: "REVERSE">
+	|	<K_REVOKE: "REVOKE">
+	|	<K_RIGHT: "RIGHT">
+	|	<K_RISING: "RISING">
+	|	<K_ROLLBACK: "ROLLBACK">
+	|	<K_ROLLUP: "ROLLUP">
+	|	<K_ROW: "ROW">
+	|	<K_ROWS: "ROWS">
+	|	<K_SAVEPOINT: "SAVEPOINT">
+	|	<K_SCALE: "SCALE">
+	|	<K_SCROLL: "SCROLL">
+	|	<K_SEARCH: "SEARCH">
+	|	<K_SECOND: "SECOND">
+	|	<K_SEGMENT: "SEGMENT">
+	|	<K_SELECT: "SELECT">
+	|	<K_SENSITIVE: "SENSITIVE">
+	|	<K_SESSION_USER: "SESSION_USER">
+	|	<K_SET: "SET">
+	|	<K_SHARE: "SHARE">
+	|	<K_SIMILAR: "SIMILAR">
+	|	<K_SMALLINT: "SMALLINT">
+	|	<K_SNAPSHOT: "SNAPSHOT">
+	|	<K_SOME: "SOME">
+	|	<K_SPECIFIC: "SPECIFIC">
+	|	<K_SPECIFICTYPE: "SPECIFICTYPE">
+	|	<K_SQL: "SQL">
+	|	<K_SQLEXCEPTION: "SQLEXCEPTION">
+	|	<K_SQLSTATE: "SQLSTATE">
+	|	<K_SQLWARNING: "SQLWARNING">
+	|	<K_START: "START">
+	|	<K_STATE: "STATE">
+	|	<K_STATIC: "STATIC">
+	|	<K_STORAGE: "STORAGE">
+	|	<K_SUBMULTISET: "SUBMULTISET">
+	|	<K_SURROGATE: "SURROGATE">
+	|	<K_SYMMETRIC: "SYMMETRIC">
+	|	<K_SYSTEM: "SYSTEM">
+	|	<K_SYSTEM_USER: "SYSTEM_USER">
+	|	<K_TABLE: "TABLE">
+	|	<K_TEXT: "TEXT">
+	|	<K_THEN: "THEN">
+	|	<K_TIME: "TIME">
+	|	<K_TIMESTAMP: "TIMESTAMP">
+	|	<K_TIMEZONE_HOUR: "TIMEZONE_HOUR">
+	|	<K_TIMEZONE_MINUTE: "TIMEZONE_MINUTE">
+	|	<K_TINYBLOB: "TINYBLOB">
+	|	<K_TINYINT: "TINYINT">
+	|	<K_TO: "TO">
+	|	<K_TRAILING: "TRAILING">
+	|	<K_TRANSACTION: "TRANSACTION">
+	|	<K_TRANSLATION: "TRANSLATION">
+	|	<K_TREAT: "TREAT">
+	|	<K_TRIGGER: "TRIGGER">
+	|	<K_TRUE: "TRUE">
+	|	<K_UNION: "UNION">
+	|	<K_UNIQUE: "UNIQUE">
+	|	<K_UNKNOWN: "UNKNOWN">
+	|	<K_UNNEST: "UNNEST">
+	|	<K_UPDATE: "UPDATE">
+	|	<K_USE: "USE">
+	|	<K_USER: "USER">
+	|	<K_USING: "USING">
+	|	<K_VACUUM: "VACUUM">
+	|	<K_VALID: "VALID">
+	|	<K_VALUE: "VALUE">
+	|	<K_VALUES: "VALUES">
+	|	<K_VARBINARY: "VARBINARY">
+	|	<K_VARCHAR: "VARCHAR">
+	|	<K_VARCHAR2: "VARCHAR2">
+	|	<K_VARYING: "VARYING">
+	|	<K_WEIGHTED: "WEIGHTED">
+	|	<K_WHEN: "WHEN">
+	|	<K_WHENEVER: "WHENEVER">
+	|	<K_WHERE: "WHERE">
+	|	<K_WHILE: "WHILE">
+	|	<K_WINDOW: "WINDOW">
+	|	<K_WITH: "WITH">
+	|	<K_WITHIN: "WITHIN">
+	|	<K_WITHOUT: "WITHOUT">
+	|	<K_WORK: "WORK">
+	|	<K_WRITE: "WRITE">
+	|	<K_YEAR: "YEAR">
+}
+
+TOKEN : /* Numeric Constants */
+{
+    < S_UNSIGNED_INTEGER: ( <DIGIT> )+ >
+|	< S_NUMBER: <FLOAT>
+	    | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )?
+    	>
+  | 	< #FLOAT: <INTEGER>
+	    | <INTEGER> ( "." <INTEGER> )?
+	    | "." <INTEGER>
+    	>
+  | 	< #INTEGER: ( <DIGIT> )+ >
+  | 	< #DIGIT: ["0" - "9"] >
+}
+
+TOKEN:
+{
+    <L_BRACKET: "[">
+|	<R_BRACKET: "]">
+}
+
+SPECIAL_TOKEN:
+{
+   <LINE_COMMENT: "--"(~["\r","\n"])*>
+|  <MULTI_LINE_COMMENT: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
+}
+
+TOKEN:
+{
+	< S_IDENTIFIER: ( <LETTER> )+ ( <DIGIT> | <LETTER> |<SPECIAL_CHARS>)* >
+| 	< #LETTER: ["a"-"z", "A"-"Z"] >
+|   < #SPECIAL_CHARS: "$" | "_">
+|   < S_BIND: ":" <S_IDENTIFIER> ("." <S_IDENTIFIER>)? >
+|   < S_DATETIME: <S_UNSIGNED_INTEGER> ( "-" <S_UNSIGNED_INTEGER> ( "-" <S_UNSIGNED_INTEGER> ( " " <S_UNSIGNED_INTEGER> ( ":" <S_UNSIGNED_INTEGER> ( ":" <S_UNSIGNED_INTEGER> )? )? )? )? )? >
+|   < S_DATETIME_LITERAL: "'" <S_DATETIME> "'" >
+|   < S_CHAR_LITERAL: "'" (~["'"])* "'" ("'" (~["'"])* "'")*>
+|   < S_QUOTED_IDENTIFIER: ("\"" | "`") (~["\n","\r","\"", "`"])* ("\"" | "`") >
+}
+
+void S_Identifier() :
+{ Token t; } 
+{ t=<S_IDENTIFIER> { jjtThis.jjtAddChild(new SqlValue(t.image), 0); } }
+void S_Quoted_Identifier() :
+{ Token t; } 
+{ t=<S_QUOTED_IDENTIFIER> { jjtThis.jjtAddChild(new SqlValue(t.image), 0); } }
+void S_Char_Literal() :
+{ Token t; } 
+{ t=<S_CHAR_LITERAL> { jjtThis.jjtAddChild(new SqlValue(t.image), 0); } }
+
+SimpleNode parse():
+{}
+{
+    (SQLScriptStatements())+ { return jjtThis; }
+}
+
+void SQLScriptStatements() #void :
+{}
+{
+    SQLStatement()
+}
+
+void BasicDataTypeDeclaration():
+{}
+{
+    (       "CHAR"
+        |   "VARCHAR"
+        |   "VARCHAR2"
+        |   "BINARY"
+        |   "VARBINARY"
+        |   "BLOB"
+        |   "MEDIUMBLOB"
+        |   "TINYBLOB"
+        
+        |   "INTEGER"
+        |   "INT"
+        |   "SMALLINT"
+        |   "TINYINT"
+        |   "MEDIUMINT"
+        |   "BIGINT"
+        
+        |   "BIT"
+        
+        |   "DECIMAL"
+        |   "NUMBER"
+        |   "NATURAL"
+        |   "REAL"
+        |   "FLOAT"
+        |   "DOUBLE"
+    ) [ "(" <S_UNSIGNED_INTEGER> [ "," <S_UNSIGNED_INTEGER> ] ")" ]
+
+    |   "TEXT"
+    |   "DATE"
+    |   "DATETIME"
+    |   "TIMESTAMP"
+    |   "TIME"
+    |   "BINARY_INTEGER"
+    |   "BOOLEAN"
+    |   "BOOL"
+    |
+    (
+    		"ENUM"
+    	|	"SET"
+    ) "(" <S_CHAR_LITERAL> ( "," <S_CHAR_LITERAL> )* ")"
+}
+/* ---------------- DECLARATIONS SECTION ends here ------------------ */
+
+/* ---------------- Code Section starts here ---------------------- */
+                                
+void SequenceOfStatements():
+{}
+{
+    (SQLStatement())+
+}
+
+void SQLStatement() #void :
+{}
+{
+    CloseStatement()
+    |
+    CommitStatement()
+    |
+    DeleteStatement()
+    |
+    FetchStatement()
+    |
+    InsertStatement()
+    |
+    LockTableStatement()
+    |
+    OpenStatement()
+    |
+    RollbackStatement()
+    |
+    SavepointStatement()
+    |
+    QueryStatement()
+    |
+    SetStatement()
+    |
+    UpdateStatement()
+    /* --> ADDED BY JIRI TOMEK */
+    |
+    CreateTableStatement()
+    |
+    DropStatement()
+    /* <-- ADDED BY JIRI TOMEK */
+}
+
+void SubroutineCall():
+{}
+{
+    RelObjectName() ["." DotObjectName()] [ "(" SQLArguments() ")" ]
+}
+
+void IfStatement():
+{}
+{
+    "IF" SQLExpression()
+    "THEN"
+          SequenceOfStatements()
+    ("ELSIF" SQLExpression()
+     "THEN"
+             SequenceOfStatements()
+    )*
+    ["ELSE"
+            SequenceOfStatements()
+    ]
+    "END" "IF" [LOOKAHEAD(2) RelObjectName()]
+}
+
+void NullStatement():
+{}
+{
+    "NULL"
+}
+
+void IsNullClause():
+{}
+{
+    "IS" ["NOT"] "NULL"
+}
+
+void CloseStatement():
+{}
+{
+    "CLOSE" RelObjectName()
+}
+
+void CommitStatement():
+{}
+{
+    "COMMIT" ["WORK"] ["COMMENT" S_Char_Literal()]
+}
+
+void FetchStatement():
+{}
+{
+    "FETCH" (RelObjectName())
+    "INTO" (RelObjectName() | <S_BIND>) ("," (RelObjectName() | <S_BIND>))*
+}
+
+void LockTableStatement():
+{}
+{
+    "LOCK" "TABLE" TableReference() ("," TableReference())*
+    "IN" LockMode() "MODE" ["NOWAIT"]
+}
+
+void OpenStatement():
+{}
+{
+    "OPEN" RelObjectName() ["(" SQLArguments() ")"]
+}
+
+void RollbackStatement():
+{}
+{
+    "ROLLBACK" ["WORK"] ["TO" ["SAVEPOINT"] RelObjectName()]
+    ["COMMENT" S_Char_Literal()]
+}
+
+void SetTransactionStatement():
+{}
+{
+    "SET" "TRANSACTION" (("READ" ("ONLY" | "WRITE"))
+                          |("USE" "ROLLBACK" "SEGMENT" RelObjectName())
+                        )
+}
+
+void SetVariableStatement():
+{}
+{
+    "SET" RelObjectName() "TO" SQLArguments()
+}
+
+void SetStatement() #void :
+{}
+{
+    LOOKAHEAD(SetTransactionStatement()) SetTransactionStatement()
+|   SetVariableStatement()
+}
+
+void LockMode():
+{}
+{
+    ("ROW" ("SHARE" | "EXCLUSIVE"))
+|   ("SHARE" ["UPDATE" | ("ROW" "EXCLUSIVE")])
+|   ("EXCLUSIVE")
+}
+
+void SavepointStatement():
+{}
+{
+    "SAVEPOINT" RelObjectName()
+}
+
+void UpdateStatement():
+{}
+{
+    "UPDATE" TableReference() [RelObjectName()]
+    "SET" ColumnValues()
+    [ ValidClause() ] 
+    [ WhereClause() ]
+}
+
+void ColumnValues():
+{}
+{
+  ColumnValue() ( "," ColumnValue() )*
+}
+void ColumnValue():
+{}
+{
+	TableColumn() "=" UpdatedValue()
+}
+
+void UpdatedValue(): // Can be a subquery or a expression
+{}
+{
+  LOOKAHEAD(("(")+ "SELECT")
+  "(" SelectStatement() ")"
+  |
+  SQLExpression()
+}
+
+void InsertStatement():
+{}
+{
+    "INSERT" "INTO" TableReference()
+    [InsertColumns()]
+	InsertValues()
+	[ ValidClause() ]
+}
+void InsertColumns():
+{}
+{
+	"(" TableColumn() ("," TableColumn())* ")"
+}
+void InsertValues():
+{}
+{
+	"VALUES" "(" SQLExpressionList() ")"
+	| SelectStatement()
+}
+void DeleteStatement():
+{}
+{
+    "DELETE" ["FROM"] TableReference() [ LOOKAHEAD(2) RelObjectName() ]
+    [ WhereClause() ]
+    [ ValidClause() ]
+}
+
+
+void QueryStatement():
+{}
+{
+    SelectStatement()
+}
+/* ----------------------- PLSQL Code Block Ends here -------------- */
+
+/* ---------------- General Productions --------------------- */
+
+void TableColumn():
+{}
+{
+    // user.table.column
+    RelObjectName() [ "." DotObjectName() ["." DotObjectName()]]
+}
+
+void RelObjectName() #ObjectName :
+{ Token t; }
+{
+    t=<S_IDENTIFIER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<S_QUOTED_IDENTIFIER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<S_CHAR_LITERAL>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+}
+
+void DotObjectName() #ObjectName :  // only put after "." match
+{ Token t; }                        // here we list some char-sequences that 
+{                                   // would be returned as a special token
+    t=<S_IDENTIFIER>                // but they are not special here
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<S_QUOTED_IDENTIFIER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<S_CHAR_LITERAL>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_ASC>                  
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_BETWEEN>              
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_BINARY_INTEGER>       
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_BOOLEAN>              
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_CHAR>                 
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_CLOSE>                
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_COMMENT>              
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_COMMIT>               
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_CONNECT>              
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_CONSTANT>             
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_CURRENT>              
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_DATE>                 
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_DECIMAL>              
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_DELETE>               
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_DESC>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_DISTINCT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_EXCLUSIVE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_EXISTS>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_EXIT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_FETCH>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_FLOAT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_GROUP>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_HAVING>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_INDEX>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_INSERT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_INTEGER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_INTERSECT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_INTO>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_JOIN>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_LEVEL>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_LIKE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_MINUS>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_MODE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_NATURAL>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_NOWAIT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_NUMBER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_ONLY>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_ORDER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_OTHERS>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_POSITIVE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_PRIOR>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_READ>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_REAL>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_RECORD>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_RETURN>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_REVERSE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_ROLLBACK>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_SAVEPOINT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_SEGMENT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_SELECT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_SHARE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_SMALLINT>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_START>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_TABLE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_THEN>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_TRANSACTION>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_UNION>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_UPDATE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_VALUES>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_VARCHAR2>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_VARCHAR>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_WHERE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|   t=<K_WRITE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+}
+
+void OracleObjectName():  // usually unused now - see above
+{}
+{
+    <S_IDENTIFIER> | <S_QUOTED_IDENTIFIER>
+}
+
+void Relop():
+{ Token t; }
+{
+    t = "="
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = "!="
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = "#"
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = "<>"
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = ">"
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = ">="
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = "<"
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+|	t = "<="
+	{ jjtThis.jjtAddChild(new SqlValue(t.image), 0); }//SqlValue
+}
+
+void TableReference():
+{}
+{
+    RelObjectName() ["." DotObjectName()]
+}
+
+void ParameterList():
+{}
+{
+    Parameter() ( "," Parameter() )*
+}
+
+void NumOrID():
+{}
+{
+    <S_IDENTIFIER> | (["+" | "-"] <S_NUMBER>)
+}
+
+void Parameter():
+{}
+{
+    RelObjectName() [ ["IN"] ["OUT"] BasicDataTypeDeclaration()
+                             [(":=" | "DEFAULT" ) SQLExpression()] ]
+}
+/* --------------- General Productions ends here --------------- */
+
+/* ----------- SQL productions start here ----------------- */
+
+void SelectStatement():
+{}
+{
+    SelectWithoutOrder()
+    [ OrderByClause() ]
+    [LOOKAHEAD(2)  ForUpdateClause() ]
+
+}
+
+void SelectWithoutOrder():
+{}
+{
+     "SELECT" [ "ALL" | DistinctModifier() ] [ SnapshotModifier() ] SelectList()
+    [IntoClause()]
+    FromClause()
+    [ WhereClause() ]
+    [ GroupByClause() ]
+    [ SetClause() ]
+}
+
+void SnapshotModifier():
+{}
+{
+	"SNAPSHOT"
+}
+
+void DistinctModifier():
+{}
+{
+	"DISTINCT"
+}
+
+/* Checks for whatever follows  SELECT */
+void SelectList():
+{}
+{
+    LOOKAHEAD(3) SelectItem() ("," SelectItem())*
+|	"(" SelectItem() ("," SelectItem())* ")"
+}
+
+void SelectItem():
+{}
+{
+	"*"
+|	LOOKAHEAD(TSQLCastExpression()) TSQLCastExpression() [AsObjectName()]
+|	LOOKAHEAD(TSQLIntersectExpression()) TSQLIntersectExpression() [AsObjectName()]
+|	LOOKAHEAD(TSQLValidExpression()) TSQLValidExpression() [AsObjectName()]
+|   LOOKAHEAD(TSQLTransactionExpression()) TSQLTransactionExpression() [AsObjectName()]
+|   LOOKAHEAD(FunctionCall()) FunctionCall() [AsObjectName()]
+|   LOOKAHEAD(SelectAllItems()) SelectAllItems()
+|   LOOKAHEAD(TableColumn()) TableColumn() [AsObjectName()] 
+|	SQLPrimaryExpression()
+}
+
+void SelectAllItems():
+{}
+{   /* table.*  OR schema.table.*  */
+    LOOKAHEAD(2)
+    RelObjectName() "." "*"
+|   RelObjectName() "." DotObjectName() "." "*"
+}
+
+void AsObjectName():
+{}
+{
+   RelObjectName() | "AS" DotObjectName()
+}
+
+void IntoClause():
+{}
+{
+   "INTO" IntoItem() ("," IntoItem())*
+}
+
+void IntoItem():
+{}
+{
+   (RelObjectName() ["." DotObjectName()] )
+|  (<S_BIND>)
+}
+
+void FromClause():
+{}
+{
+    "FROM" FromItem() ( "," FromItem())*
+}
+
+void FromItem():
+{}
+{
+    ( LOOKAHEAD(TSQLTableReference()) TSQLTableReference() | TableReference() | LOOKAHEAD(2) "(" FromItemExpression() ")" | ( "(" SubQuery() ")" AsObjectName() ) )
+    ( LOOKAHEAD(JoinerExpression()) JoinerExpression() ["AS" AsObjectName()] | [LOOKAHEAD(2) AsObjectName()] )
+}
+
+void FromItemExpression():
+{}
+{
+    (
+     ( TableReference() | "(" FromItemExpression() ")") 
+     (JoinerExpression())*
+    )
+}
+
+void JoinerExpression():
+{}
+{
+   "JOIN" TableReference() [JoinWhereClause()]
+|  LOOKAHEAD(2)
+   RelObjectName() "JOIN" TableReference() [JoinWhereClause()]
+}
+
+void JoinWhereClause():
+{}
+{
+    "ON" SQLExpression()
+}
+
+void WhereClause():
+{}
+{
+    "WHERE" SQLExpression()
+}
+
+void GroupByClause():
+{}
+{
+    "GROUP" "BY" SQLExpressionList()
+    ["HAVING" SQLExpression()]
+}
+
+void SetClause():
+{}
+{
+    (("UNION" ["ALL"]) | "INTERSECT" | "MINUS")
+    // LOOKAHEAD("(") because Oracle supports "(" after a UNION
+    (LOOKAHEAD("(") ("(" SelectWithoutOrder() ")")
+        | SelectWithoutOrder()
+    )
+}
+
+void OrderByClause():
+{}
+{
+    "ORDER" "BY" SQLSimpleExpression() ["ASC" | "DESC" ]
+        ("," SQLSimpleExpression() ["ASC" | "DESC"])*
+}
+
+void ForUpdateClause():
+{}
+{
+    "FOR" "UPDATE" "OF" TableColumn() ("," TableColumn())*
+}
+
+void SQLExpression():
+{}
+{
+    SQLOrExpressions()
+}
+
+void SQLOrExpressions() #void :
+{}
+{
+    LOOKAHEAD(SQLOrExpression()) SQLOrExpression()
+|   SQLAndExpressions()
+}
+
+void SQLOrExpression():
+{}
+{
+    SQLAndExpressions() ("OR" SQLAndExpressions())+
+}
+
+
+void SQLAndExpressions() #void :
+{}
+{
+    LOOKAHEAD(SQLAndExpression()) SQLAndExpression()
+|   SQLUnaryLogicalExpressions()
+}
+
+void SQLAndExpression():
+{}
+{
+    SQLUnaryLogicalExpressions() ( "AND" SQLUnaryLogicalExpressions())+
+}
+
+void SQLUnaryLogicalExpressions() #void :
+{}
+{
+    LOOKAHEAD(2) ExistsClause()
+|   SQLRelationalExpressions()
+|   TSQLRelationalExpression()
+}
+
+void ExistsClause():
+{}
+{
+    ["NOT"] "EXISTS" "(" SubQuery() ")"
+}
+
+void SQLRelationalExpressions() # void :
+{}
+{
+    LOOKAHEAD(SQLRelationalExpression()) SQLRelationalExpression()
+|  
+    /* Only after looking past "(", Expression() and "," we will know that
+       it is expression list */
+    (LOOKAHEAD(SQLRelopExpression()) SQLRelopExpression()
+|
+     LOOKAHEAD("(" SQLSimpleExpression() ",") "(" SQLExpressionList() ")"
+|
+    (LOOKAHEAD(2) SQLPriorExpression() | SQLSimpleExpressions())
+)
+
+}
+
+void SQLRelationalExpression() :
+{}
+{
+    /* Only after looking past "(", Expression() and "," we will know that
+       it is expression list */
+
+(    LOOKAHEAD("(" SQLSimpleExpression() ",") "(" SQLExpressionList() ")"
+|
+    (LOOKAHEAD(2) SQLPriorExpression() | SQLSimpleExpressions())
+)
+
+    /* Lookahead(2) is required because of NOT IN,NOT BETWEEN and NOT LIKE */
+    //(  SQLRelationalOperatorExpression() 
+(  LOOKAHEAD(2) (SQLInClause())
+|  LOOKAHEAD(2) (SQLBetweenClause())
+|  LOOKAHEAD(2) (SQLLikeClause())
+|  IsNullClause()
+)
+}
+
+void SQLPriorExpression():
+{}
+{
+    ["NOT"] "PRIOR" SQLSimpleExpressions()
+}
+
+void SQLExpressionList():
+{}
+{
+    SQLSimpleExpression() ("," SQLSimpleExpression())*
+}
+
+void SQLRelopExpression():
+{}
+{
+(    LOOKAHEAD("(" SQLSimpleExpression() ",") "(" SQLExpressionList() ")"
+|
+    (LOOKAHEAD(2) SQLPriorExpression() | SQLSimpleExpressions())
+)
+
+
+    Relop()
+
+    /* Only after seeing an ANY/ALL or "(" followed by a SubQuery() we can
+    determine that is is a sub-query
+    */
+    (   LOOKAHEAD(AllOrAnySubQuery())
+        AllOrAnySubQuery()
+    |
+        LOOKAHEAD(2) SQLPriorExpression()
+    |    
+        SQLSimpleExpressions()
+    )
+}
+
+void SQLRelationalOperatorExpression():
+{}
+{
+
+    Relop()
+
+    /* Only after seeing an ANY/ALL or "(" followed by a SubQuery() we can
+    determine that is is a sub-query
+    */
+    (   LOOKAHEAD(AllOrAnySubQuery())
+        AllOrAnySubQuery()
+    |
+        LOOKAHEAD(2) SQLPriorExpression()
+    |    
+        SQLSimpleExpression()
+    )
+}
+
+void SQLInClause():
+{}
+{
+    ["NOT"] "IN" "(" (SQLExpressionList() | SubQuery()) ")"
+}
+
+void SQLBetweenClause():
+{}
+{
+    ["NOT"] "BETWEEN" SQLSimpleExpression() "AND" SQLSimpleExpression()
+}
+
+void SQLLikeClause():
+{}
+{
+    ["NOT"] "LIKE" SQLSimpleExpression()
+}
+
+void SQLSimpleExpression():
+{}
+{
+    SQLSimpleExpressions()
+}
+
+void SQLSimpleExpressions() #void :
+{}
+{
+    SQLAdditiveExpressions()
+}
+
+void SQLAdditiveExpressions() #void :
+{}
+{
+    LOOKAHEAD(SQLAdditiveExpression()) SQLAdditiveExpression()
+|
+    SQLMultiplicativeExpressions()
+}
+
+void SQLAdditiveExpression():
+{}
+{
+    SQLMultiplicativeExpressions() ( ("+" | "-" | "||") SQLMultiplicativeExpressions())+
+}
+
+void SQLMultiplicativeExpressions() #void :
+{}
+{
+    LOOKAHEAD(SQLMultiplicativeExpression()) SQLMultiplicativeExpression()
+|   SQLExpotentExpressions()
+}
+
+void SQLMultiplicativeExpression():
+{}
+{
+    SQLExpotentExpressions() ( ("*" | "/") SQLExpotentExpressions())+
+}
+
+void SQLExpotentExpressions() #void :
+{}
+{
+    LOOKAHEAD(SQLExpotentExpression()) SQLExpotentExpression()
+|   SQLUnaryExpressions()
+}
+
+void SQLExpotentExpression():
+{}
+{
+    SQLUnaryExpressions() ( "**" SQLUnaryExpressions())+
+}
+
+void SQLUnaryExpressions() #void :
+{}
+{
+    LOOKAHEAD(SQLUnaryExpression()) SQLUnaryExpression()
+|   SQLPrimaryExpression()
+}
+
+void SQLUnaryExpression():
+{}
+{
+    ("+" | "-") SQLPrimaryExpression()
+}
+
+void SQLPrimaryExpression():
+{}
+{
+
+    "NULL"
+|    LOOKAHEAD(FunctionCall()) FunctionCall()
+|    LOOKAHEAD(OuterJoinExpression()) OuterJoinExpression()
+|    TableColumn() 	// |   <S_CHAR_LITERAL>
+|   <S_UNSIGNED_INTEGER>
+|   <S_NUMBER>
+|   <S_BIND>
+|	"NEW"
+|   "(" SQLExpression() ")"
+}
+
+void FunctionCall():
+{}
+{
+    // caters the following
+    // function(args)
+    // package.function(args)
+    // user.package.function(args)
+
+    // however note that "distinct/all/*" can be only used with
+    // inbuilt functions but no distinction is made between inbuilt
+    // function and custom functions
+
+    RelObjectName() [ "." DotObjectName() ["." DotObjectName()]]
+    "(" [ ["DISTINCT" | "ALL"] (SQLArguments() | "*") ] ")"
+}
+
+void SQLArguments():
+{}
+{
+    SQLExpressionList()
+}
+
+
+void OuterJoinExpression():
+{}
+{
+    // user.table.col
+    RelObjectName() [ "." DotObjectName() ["." DotObjectName()]]
+    "(" "+" ")"
+}
+
+void SubQuery():
+{}
+{
+    SelectWithoutOrder()
+} 
+/* --> ADDED BY JIRI TOMEK */
+/* ========== CREATE STATEMENT ========== */
+void CreateStatement():
+{}
+{
+    CreateTableStatement()
+}
+
+void CreateTableStatement():
+{}
+{
+    "CREATE" "TABLE" CreateTableName()
+    TableContentDefinition() 
+    [ TemporalDefinition() ]
+    [ VacuumingDefinition() ]
+}
+void CreateTableName():
+{}
+{
+    TableReference()
+}
+void TableContentDefinition():
+{}
+{
+    "(" ColumnDefinition() ("," ( ColumnDefinition() | OutOfLineConstraint() ) )* ")"
+}
+void ColumnDefinition():
+{}
+{
+    ColumnName() ColumnDataType() ( PrimaryKeyInlineConstraint() | ColumnParameter() | InlineConstraint() )*
+}
+void ColumnName():
+{}
+{
+    S_Identifier()
+|	S_Quoted_Identifier()
+}
+void InlineConstraint():
+{}
+{
+	[ ConstraintName() ]
+	(
+	["NOT"] "NULL"
+|	"UNIQUE"
+|	ReferencesClause()
+	)
+}
+void OutOfLineConstraint():
+{}
+{
+	[ ConstraintName() ]
+	(
+	"UNIQUE" "(" TableColumn() ( "," TableColumn() )* ")"
+|	PrimaryKeyOutOfLineConstraint()
+|	"FOREIGN" "KEY" "(" TableColumn() ( "," TableColumn() )* ")" ReferencesClause()
+	)
+}
+void PrimaryKeyOutOfLineConstraint():
+{}
+{
+	"PRIMARY" "KEY" "(" TableColumn() ( "," TableColumn() )* ")"
+}
+void ConstraintName():
+{}
+{
+	"CONSTRAINT" RelObjectName()
+}
+void ReferencesClause():
+{}
+{
+	"REFERENCES" DotObjectName() 
+	[ "(" TableColumn() ")" ]
+	[ "ON" "DELETE" ( "CASCADE" | ( "SET" "NULL" ) ) ]
+}
+void PrimaryKeyInlineConstraint():
+{}
+{
+    "PRIMARY" "KEY"
+}
+void ColumnParameter():
+{}
+{
+    ( "DEFAULT" SQLExpression() )
+|   "AUTO_INCREMENT"
+|	"COMMENT" <S_CHAR_LITERAL>
+|   "COLUMN_FORMAT" ( "FIXED" | "DYNAMIC" | "DEFAULT" )
+|   "STORAGE"  ( "DISK" | "MEMORY" )
+}
+void ColumnDataType():
+{}
+{
+    BasicDataTypeDeclaration()
+|	SurrogateDataType()
+}
+void SurrogateDataType():
+{}
+{
+	"SURROGATE"
+}
+void TemporalDefinition():
+{}
+{
+    "AS" 
+    ( 
+      (
+        LOOKAHEAD(ValidStateDefinition())
+        ValidStateDefinition()
+        | ValidEventDefinition()
+      ) [ "AND" TransactionDefinition() ]
+    | TransactionDefinition()
+    )
+}
+void ValidStateDefinition():
+{}
+{
+    "VALID" "STATE" [ DateTimeScale() ]
+}
+void ValidEventDefinition():
+{}
+{
+    "VALID" "EVENT" [ DateTimeScale() ]
+}
+void TransactionDefinition():
+{}
+{
+    "TRANSACTION"
+}
+void VacuumingDefinition():
+{}
+{
+    "VACUUM" 
+    (
+    DateExpression()
+|   TimeExpression()
+|   TimestampExpression()
+|   NobindExpression()
+	)
+}
+/* ========== END CREATE STATEMENT ========== */
+
+/* ========== DROP STATEMENT ========== */
+void DropStatement():
+{}
+{
+	"DROP" "TABLE" TableReference()
+}
+/* ========== /DROP STATEMENT ========== */
+
+/* ========== DATE AND TIME ========== */
+void DateExpression():
+{}
+{
+    "DATE" 
+    (
+    LOOKAHEAD(NowRelative())
+    NowRelative()
+|   (DateTimeString() [ DateTimeScale() ])
+	)
+}
+void TimeExpression():
+{}
+{
+    "TIME" 
+    (
+    LOOKAHEAD(NowRelative())
+    NowRelative()
+|   (DateTimeString() [ DateTimeScale() ])
+	)
+}
+void TimestampExpression():
+{}
+{
+    "TIMESTAMP" 
+    (
+    LOOKAHEAD(NowRelative())
+    NowRelative()
+|   (DateTimeString() [ DateTimeScale() ])
+	)
+}
+void NobindExpression():
+{}
+{
+    "NOBIND" "(" ( DateExpression() | TimeExpression() | TimestampExpression() ) ")"
+}
+void IntervalExpression():
+{}
+{
+    "INTERVAL" IntervalLength() DateTimeScale()
+}
+void IntervalScaleExpression():
+{}
+{
+    "INTERVAL" DateTimeScale()
+}
+void PeriodExpression():
+{}
+{
+    "PERIOD" <L_BRACKET> ( DateString() | NowRelative() ) " - " ( DateString() | NowRelative() ) <R_BRACKET> [ DateTimeScale() ]
+}
+void ValidClause():
+{}
+{
+    "VALID" 
+    (
+    PeriodExpression()
+|	DateExpression()
+|	TimeExpression()
+|	TimestampExpression()
+    )
+}
+void DateString():
+{ Token t; }
+{
+    t=<S_DATETIME>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|   t=<K_FOREVER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }    
+}
+void DateTimeString():
+{ Token t; }
+{
+    t=<S_DATETIME_LITERAL>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|	NowRelative()
+}
+void DateTimeScale():
+{ Token t; }
+{
+    t=<K_DAY>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|	t=<K_MONTH>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|   t=<K_YEAR>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|   t=<K_SECOND>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|   t=<K_MINUTE>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|   t=<K_HOUR>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+}
+void IntervalLength():
+{ Token t; }
+{
+    t=<S_UNSIGNED_INTEGER>
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+}
+void NowRelative():
+{}
+{
+	"NOW" [ PlusOrMinus() IntervalLength() [LOOKAHEAD(2) DateTimeScale() ] ]
+}
+void PlusOrMinus():
+{ Token t; }
+{
+	t="-"
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+|   t="+"
+    { jjtThis.jjtAddChild(new SqlValue(t.image), 0); }
+}
+/* ========== END DATE AND TIME ========== */
+void TemporalExpression():
+{}
+{
+	DateExpression()
+|	TimeExpression()
+|	TimestampExpression()
+|	IntervalExpression()
+|	PeriodExpression()
+|	TSQLCastExpression()
+|	TSQLValidExpression()
+|	TSQLTransactionExpression()
+}
+
+void TSQLRelationalExpression():
+{}
+{
+	LOOKAHEAD(TSQLRelopExpression()) TSQLRelopExpression()
+|	LOOKAHEAD(TSQLPrecedesExpression()) TSQLPrecedesExpression()
+|	LOOKAHEAD(TSQLContainsExpression()) TSQLContainsExpression()
+|	LOOKAHEAD(TSQLOverlapsExpression()) TSQLOverlapsExpression()
+|	TSQLMeetsExpression()
+}
+void TSQLCastExpression():
+{}
+{
+	"CAST" "(" TSQLValidExpression() "AS" IntervalScaleExpression() ")"
+}
+void TSQLIntersectExpression():
+{}
+{
+	"INTERSECT" "(" ( TSQLValidExpression()|PeriodExpression() ) "," ( TSQLValidExpression()|PeriodExpression() ) ")"
+}
+void TSQLValidExpression():
+{}
+{
+	"VALID" "(" TableReference() ")"
+}
+void TSQLTransactionExpression():
+{}
+{
+	"TRANSACTION" "(" TableReference() ")"
+}
+void TSQLRelopExpression():
+{}
+{
+	TemporalExpression() 
+	Relop() 
+    ( 
+    TemporalExpression() 
+|   AllOrAnySubQuery()
+	)
+}
+void AllOrAnySubQuery():
+{}
+{
+	[ AllOrAny() ] "(" SubQuery() ")"
+}
+void AllOrAny():
+{}
+{
+	"ALL" | "ANY"
+}
+void NotModifier():
+{}
+{
+	"NOT"
+}
+void TSQLPrecedesExpression():
+{}
+{
+    TemporalExpression() [NotModifier()] "PRECEDES" TemporalExpression()
+}
+void TSQLContainsExpression():
+{}
+{
+    TemporalExpression() [NotModifier()] "CONTAINS" TemporalExpression()
+}
+void TSQLOverlapsExpression():
+{}
+{
+    TemporalExpression() [NotModifier()] "OVERLAPS" TemporalExpression()
+}
+void TSQLMeetsExpression():
+{}
+{
+    TemporalExpression() [NotModifier()] "MEETS" TemporalExpression()
+}
+void TSQLTableReference():
+{}
+{
+	TableReference() "(" TableColumn() ( "," TableColumn() )* ")"
+}
+/* <-- ADDED BY JIRI TOMEK */

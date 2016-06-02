@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!-- Project Information -->
+  <name>tsql2console</name>
+  <description>Test console for the processor of TSQL2 on a relational database system.</description>
+  <inceptionYear>2009</inceptionYear>
+  <!-- POM Relationships -->
+  <parent>
+    <groupId>cz.vutbr.fit</groupId>
+    <artifactId>tsql2</artifactId>
+    <version>2.0</version>
+  </parent>
+  <groupId>cz.vutbr.fit</groupId>
+  <artifactId>tsql2console</artifactId>
+  <version>2.0-SNAPSHOT</version>
+  <dependencies>
+    <dependency>
+      <groupId>cz.vutbr.fit</groupId>
+      <artifactId>tsql2lib</artifactId>
+      <version>2.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.weblogic</groupId>
+      <artifactId>ojdbc7</artifactId>
+      <version>RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>RELEASE</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <!-- Build Settings -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>cz.vutbr.fit.tsql2console.Console</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
