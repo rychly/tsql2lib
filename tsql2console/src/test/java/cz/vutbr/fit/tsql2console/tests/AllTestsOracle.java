@@ -1,5 +1,5 @@
 /**
- * Processor of TSQL2 on a Relational Database System
+ *
  *
  * LICENSE
  *
@@ -9,33 +9,37 @@
  * http://www.opensource.org/licenses/bsd-license.php
  *
  * @copyright Copyright (c) 2008-2009 Jiri Tomek <katulus@volny.cz>
+ * @copyright Copyright (c) 2016- Marek Rychly <marek.rychly@gmail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-package cz.vutbr.fit.tsql2lib.tests;
+package cz.vutbr.fit.tsql2console.tests;
 
-import java.sql.DriverManager;
+import java.sql.SQLException;
 
+import oracle.jdbc.pool.OracleDataSource;
 import cz.vutbr.fit.tsql2lib.TSQL2Adapter;
+import cz.vutbr.fit.tsql2lib.tests.TestsSettings;
+import cz.vutbr.fit.tsql2lib.tests.CreateTableTest;
+import cz.vutbr.fit.tsql2lib.tests.DropTest;
+import cz.vutbr.fit.tsql2lib.tests.InsertTest;
+import cz.vutbr.fit.tsql2lib.tests.UpdateTest;
+import cz.vutbr.fit.tsql2lib.tests.DeleteTest;
+import cz.vutbr.fit.tsql2lib.tests.SelectTest;
+import cz.vutbr.fit.tsql2lib.tests.ExtendedSelectTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-/**
- * Test suite for tsql2lib. This suite contains tests for various parts of
- * tsql2lib library.
- *
- * @author Jiri Tomek <katulus@volny.cz>
- * @copyright Copyright (c) 2008-2009 Jiri Tomek <katulus@volny.cz>
- */
-public class AllTests {
+public class AllTestsOracle {
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("Tests for tsql2lib");
+        TestSuite suite = new TestSuite("Test for tsql2tests");
 
         try {
-            // load driver
-            //Class.forName("com.mysql.jdbc.Driver");
-            String url = "###"; // specify correct connection string
-            TestsSettings.baseConnection = DriverManager.getConnection(url, "root", "root");
+            // change as required
+            String url = "jdbc:oracle:thin:tsql2/tsql2@//192.168.1.8:1521/xexdb";
+            OracleDataSource ods = new OracleDataSource();
+            ods.setURL(url);
+            TestsSettings.baseConnection = ods.getConnection();
             TSQL2Adapter.closeUnderlyingConnection = false;
 
             //$JUnit-BEGIN$
@@ -48,7 +52,7 @@ public class AllTests {
             suite.addTest(ExtendedSelectTest.suite());
             //$JUnit-END$
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             e.printStackTrace();
         }
 

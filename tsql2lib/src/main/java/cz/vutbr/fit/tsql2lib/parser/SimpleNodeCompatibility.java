@@ -4,13 +4,12 @@
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
+ * with this package in the file LICENSE.
  * It is also available through the world-wide-web at this URL:
  * http://www.opensource.org/licenses/bsd-license.php
  *
- * @package    cz.vutbr.fit.tsql2lib.translators
- * @copyright  Copyright (c) 2016- Marek Rychly <marek.rychly@gmail.com>
- * @license    http://www.opensource.org/licenses/bsd-license.php     New BSD License
+ * @copyright Copyright (c) 2016- Marek Rychly <marek.rychly@gmail.com>
+ * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 package cz.vutbr.fit.tsql2lib.parser;
 

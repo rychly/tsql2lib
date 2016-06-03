@@ -4,13 +4,12 @@
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
+ * with this package in the file LICENSE.
  * It is also available through the world-wide-web at this URL:
  * http://www.opensource.org/licenses/bsd-license.php
  *
- * @package    cz.vutbr.fit.tsql2sample
- * @copyright  Copyright (c) 2008-2009 Jiri Tomek <katulus@volny.cz>
- * @license    http://www.opensource.org/licenses/bsd-license.php     New BSD License
+ * @copyright Copyright (c) 2008-2009 Jiri Tomek <katulus@volny.cz>
+ * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 package cz.vutbr.fit.tsql2sample;
 
@@ -55,9 +54,9 @@ import cz.vutbr.fit.tsql2lib.TypeMapper;
 
 /**
  * Sample application to show possibilities of tsql2lib.
- * 
- * @author 		Jiri Tomek <katulus@volny.cz>
- * @copyright  	Copyright (c) 2008-2009 Jiri Tomek <katulus@volny.cz>
+ *
+ * @author Jiri Tomek <katulus@volny.cz>
+ * @copyright Copyright (c) 2008-2009 Jiri Tomek <katulus@volny.cz>
  */
 public class App extends JFrame implements ActionListener, ListSelectionListener {
 
@@ -66,7 +65,7 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
      * Connection object for database access
      */
     private Connection _con = null;
-    private String[] _queriesNames = {
+    private final String[] _queriesNames = {
         "Nejdéle sloužící lékař",
         "Nejdelší specializace",
         "Bývalí pacienti",
@@ -83,19 +82,19 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
         "Vymazání záznamu",
         "Aktualizace záznamu"
     };
-    private String[] _queriesDescs = {
-        "Dotaz vybere lékaře, který slouží nejdéle. Provede se slévání přes jméno a vybere se záznam s nejdelším časem platnosti.\n\n" +
-        "Výsledkem je Jan Novák, protože celkově slouží (1.1.1995-dnes).",
-        "Dotaz vybere lékaře, který slouží nejdéle bez změny specializace. " +
-        "Provede se slévání před id a specializaci, vybere se nejdelší čas platnosti bez změny specializace a následně se vybere jméno se shodným ID.\n\n" +
-        "Vybere se Pavel Kovář, protože stejnou specializaci vykonává (6.8.1998 - dnes) a Jan Novák mezitím specializaci změnil.",
+    private final String[] _queriesDescs = {
+        "Dotaz vybere lékaře, který slouží nejdéle. Provede se slévání přes jméno a vybere se záznam s nejdelším časem platnosti.\n\n"
+        + "Výsledkem je Jan Novák, protože celkově slouží (1.1.1995-dnes).",
+        "Dotaz vybere lékaře, který slouží nejdéle bez změny specializace. "
+        + "Provede se slévání před id a specializaci, vybere se nejdelší čas platnosti bez změny specializace a následně se vybere jméno se shodným ID.\n\n"
+        + "Vybere se Pavel Kovář, protože stejnou specializaci vykonává (6.8.1998 - dnes) a Jan Novák mezitím specializaci změnil.",
         "Vybere ty pacienty, kteří již nejsou v evidenci. Vybere záznamy se skončenou platností.",
-        "Vybere pacienty, u kterých došlo ke změně původní diagnózy na jinou. Vyberou se tedy záznamy z tabulky diagnóz, " +
-        "které na sebe u daného pacienta přímo navazují.",
-        "Vybere pacienty, kteří navštěvovali souběžně více lékařů. Vyberou se záznamy diagnóz pro " +
-        "stejného pacienta a různé lékaře kde se překrývají časy platnosti.",
-        "Vybere pacienty, kteří užívali více léků souběžně. Vyberou se záznamy o užívání pro stejného " +
-        "pacienta s překrývajícími se časy platnosti.",
+        "Vybere pacienty, u kterých došlo ke změně původní diagnózy na jinou. Vyberou se tedy záznamy z tabulky diagnóz, "
+        + "které na sebe u daného pacienta přímo navazují.",
+        "Vybere pacienty, kteří navštěvovali souběžně více lékařů. Vyberou se záznamy diagnóz pro "
+        + "stejného pacienta a různé lékaře kde se překrývají časy platnosti.",
+        "Vybere pacienty, kteří užívali více léků souběžně. Vyberou se záznamy o užívání pro stejného "
+        + "pacienta s překrývajícími se časy platnosti.",
         "Vloží záznam o novém pacientovi se jménem Jromír Kotoul.",
         "Přidá diagnózu chřipky pro pacienta Jaromíra Kotoula, zadanou lékařkou Petrou Kuncovou.",
         "Přidá užívání léku Paralen pro pacienta Jaromíra Kotoula, předepsané lékařkou Petrou Kuncovou od dnešního dne po dobu jednoho týdne.",
@@ -106,72 +105,72 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
         "Ukončí platnost záznamu pacienta Martin Tlustý ke dni 1.5.2009.",
         "Změní jméno pacientky Aleny Adámkové na Alena Bláhová s platností od 6.6.2007."
     };
-    private String[] _queries = {
-        "SELECT jmeno\n" +
-        " FROM lekari(jmeno) AS L\n" +
-        " WHERE CAST(VALID(L) AS INTERVAL DAY) > ALL (SELECT CAST(VALID(L2) AS INTERVAL DAY)\n" +
-        " FROM lekari(jmeno) L2\n" +
-        " WHERE L.jmeno != L2.jmeno)",
-        "SELECT SNAPSHOT L3.jmeno, VALID(L3)\n" +
-        " FROM lekari(id, specializace) AS L, lekari L3\n" +
-        " WHERE CAST(VALID(L) AS INTERVAL DAY) > ALL (SELECT CAST(VALID(L2) AS INTERVAL DAY)\n" +
-        " FROM lekari(id, specializace) L2\n" +
-        " WHERE L.id != L2.id)\n" +
-        " AND L3.id = L.id",
-        "SELECT jmeno\n" +
-        " FROM pacienti\n" +
-        " WHERE VALID(pacienti) PRECEDES DATE NOW",
-        "SELECT SNAPSHOT jmeno\n" +
-        " FROM pacienti\n" +
-        " WHERE id = ANY (SELECT D1.pacient \n" +
-        " 	FROM diagnozy D1, diagnozy D2\n" +
-        "		WHERE D1.diagnoza != D2.diagnoza\n" +
-        "		AND D1.pacient = D2.pacient\n" +
-        "		AND VALID(D1) MEETS VALID(D2))",
-        "SELECT SNAPSHOT P.jmeno, L1.jmeno AS lekar1, L2.jmeno AS lekar2, INTERSECT(VALID(D1), VALID(D2)) AS obdobi\n" +
-        " FROM pacienti P, lekari L1, lekari L2, diagnozy D1, diagnozy D2\n" +
-        " WHERE D1.pacient = D2.pacient\n" +
-        " AND D1.lekar != D2.lekar\n" +
-        " AND VALID(D1) OVERLAPS VALID(D2)\n" +
-        " AND D1.pacient = P.id\n" +
-        " AND D1.lekar = L1.id\n" +
-        " AND D2.lekar = L2.id\n" +
-        " AND L1.id < L2.id",
-        "SELECT DISTINCT SNAPSHOT P.jmeno, L1.lek AS lek1, L2.lek AS lek2, INTERSECT(VALID(L1), VALID(L2)) AS obdobi\n" +
-        " FROM pacienti P, leky L1, leky L2 \n" +
-        " WHERE L1.pacient = P.id\n" +
-        "   AND L1.pacient = L2.pacient\n" +
-        "	AND L1.lek != L2.lek\n" +
-        "	AND L1.lek < L2.lek\n" +
-        "	AND VALID(L1) OVERLAPS VALID(L2))\n" +
-        " ORDER BY P.jmeno",
+    private final String[] _queries = {
+        "SELECT jmeno\n"
+        + " FROM lekari(jmeno) AS L\n"
+        + " WHERE CAST(VALID(L) AS INTERVAL DAY) > ALL (SELECT CAST(VALID(L2) AS INTERVAL DAY)\n"
+        + " FROM lekari(jmeno) L2\n"
+        + " WHERE L.jmeno != L2.jmeno)",
+        "SELECT SNAPSHOT L3.jmeno, VALID(L3)\n"
+        + " FROM lekari(id, specializace) AS L, lekari L3\n"
+        + " WHERE CAST(VALID(L) AS INTERVAL DAY) > ALL (SELECT CAST(VALID(L2) AS INTERVAL DAY)\n"
+        + " FROM lekari(id, specializace) L2\n"
+        + " WHERE L.id != L2.id)\n"
+        + " AND L3.id = L.id",
+        "SELECT jmeno\n"
+        + " FROM pacienti\n"
+        + " WHERE VALID(pacienti) PRECEDES DATE NOW",
+        "SELECT SNAPSHOT jmeno\n"
+        + " FROM pacienti\n"
+        + " WHERE id = ANY (SELECT D1.pacient \n"
+        + " 	FROM diagnozy D1, diagnozy D2\n"
+        + "		WHERE D1.diagnoza != D2.diagnoza\n"
+        + "		AND D1.pacient = D2.pacient\n"
+        + "		AND VALID(D1) MEETS VALID(D2))",
+        "SELECT SNAPSHOT P.jmeno, L1.jmeno AS lekar1, L2.jmeno AS lekar2, INTERSECT(VALID(D1), VALID(D2)) AS obdobi\n"
+        + " FROM pacienti P, lekari L1, lekari L2, diagnozy D1, diagnozy D2\n"
+        + " WHERE D1.pacient = D2.pacient\n"
+        + " AND D1.lekar != D2.lekar\n"
+        + " AND VALID(D1) OVERLAPS VALID(D2)\n"
+        + " AND D1.pacient = P.id\n"
+        + " AND D1.lekar = L1.id\n"
+        + " AND D2.lekar = L2.id\n"
+        + " AND L1.id < L2.id",
+        "SELECT DISTINCT SNAPSHOT P.jmeno, L1.lek AS lek1, L2.lek AS lek2, INTERSECT(VALID(L1), VALID(L2)) AS obdobi\n"
+        + " FROM pacienti P, leky L1, leky L2 \n"
+        + " WHERE L1.pacient = P.id\n"
+        + "   AND L1.pacient = L2.pacient\n"
+        + "	AND L1.lek != L2.lek\n"
+        + "	AND L1.lek < L2.lek\n"
+        + "	AND VALID(L1) OVERLAPS VALID(L2))\n"
+        + " ORDER BY P.jmeno",
         "INSERT INTO pacienti (id, jmeno) VALUES (NEW, 'Jaromir Kotoul')",
-        "INSERT INTO diagnozy (pacient, lekar, diagnoza)\n" +
-        " SELECT p.id, l.id, 'chripka'\n" +
-        " FROM pacienti p, lekari l\n" +
-        " WHERE p.jmeno = 'Jaromir Kotoul' AND l.jmeno = 'Petra Kuncova'",
-        "INSERT INTO leky (pacient, lekar, lek)\n" +
-        " SELECT p.id, l.id, 'paralen'\n" +
-        " FROM pacienti p, lekari l\n" +
-        " WHERE p.jmeno = 'Jaromir Kotoul' AND l.jmeno = 'Petra Kuncova'\n" +
-        "VALID PERIOD [now - now+7 DAY]",
+        "INSERT INTO diagnozy (pacient, lekar, diagnoza)\n"
+        + " SELECT p.id, l.id, 'chripka'\n"
+        + " FROM pacienti p, lekari l\n"
+        + " WHERE p.jmeno = 'Jaromir Kotoul' AND l.jmeno = 'Petra Kuncova'",
+        "INSERT INTO leky (pacient, lekar, lek)\n"
+        + " SELECT p.id, l.id, 'paralen'\n"
+        + " FROM pacienti p, lekari l\n"
+        + " WHERE p.jmeno = 'Jaromir Kotoul' AND l.jmeno = 'Petra Kuncova'\n"
+        + "VALID PERIOD [now - now+7 DAY]",
         "SELECT * FROM Lekari",
         "SELECT * FROM Pacienti",
-        "SELECT DISTINCT SNAPSHOT p.jmeno AS pacient, diagnoza, l.jmeno AS lekar, VALID(Diagnozy)\n" +
-        "FROM Diagnozy, Pacienti p, Lekari l\n" +
-        "WHERE p.id = pacient\n" +
-        "AND l.id = lekar\n" +
-        "AND VALID(p) OVERLAPS VALID(Diagnozy)",
-        "SELECT DISTINCT SNAPSHOT p.jmeno AS pacient, lek, l.jmeno AS lekar, VALID(Leky)\n" +
-        "FROM Leky, Pacienti p, Lekari l\n" +
-        "WHERE p.id = pacient\n" +
-        "AND l.id = lekar\n" +
-        "AND VALID(l) OVERLAPS VALID(Leky)\n" +
-        "AND VALID(p) OVERLAPS VALID(Leky)",
+        "SELECT DISTINCT SNAPSHOT p.jmeno AS pacient, diagnoza, l.jmeno AS lekar, VALID(Diagnozy)\n"
+        + "FROM Diagnozy, Pacienti p, Lekari l\n"
+        + "WHERE p.id = pacient\n"
+        + "AND l.id = lekar\n"
+        + "AND VALID(p) OVERLAPS VALID(Diagnozy)",
+        "SELECT DISTINCT SNAPSHOT p.jmeno AS pacient, lek, l.jmeno AS lekar, VALID(Leky)\n"
+        + "FROM Leky, Pacienti p, Lekari l\n"
+        + "WHERE p.id = pacient\n"
+        + "AND l.id = lekar\n"
+        + "AND VALID(l) OVERLAPS VALID(Leky)\n"
+        + "AND VALID(p) OVERLAPS VALID(Leky)",
         "DELETE FROM Pacienti WHERE jmeno = 'Martin Tlusty' VALID PERIOD [2009-05-01 - FOREVER]",
         "UPDATE Pacienti SET jmeno = 'Alena Blahova' VALID PERIOD [2007-06-06 - FOREVER] WHERE jmeno = 'Alena Adamkova'"
     };
-    private JList _queriesList = null;
+    private JList<String> _queriesList = null;
     private JTextArea _descBox = null;
     private JTextArea _queryBox = null;
     private JPanel _resultsPanel = null;
@@ -206,7 +205,7 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
     private void query(String query) {
         Statement stmt = null;
         ResultSet results = null;
-        ResultSetMetaData meta = null;
+        ResultSetMetaData meta;
 
         try {
             if (_con == null) {
@@ -228,16 +227,16 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
 
                 // create array of columns' names
                 int cols = meta.getColumnCount();
-                Vector<String> columnNames = new Vector<String>();
+                Vector<String> columnNames = new Vector<>();
                 for (int i = 1; i <= cols; i++) {
                     columnNames.add(meta.getColumnLabel(i));
                 }
 
                 // create matrix with result data
-                Vector<Vector<String>> data = new Vector<Vector<String>>();
+                Vector<Vector<String>> data = new Vector<>();
                 while (results.next()) {
-                    Vector<String> row = new Vector<String>();
-                    String str = "";
+                    Vector<String> row = new Vector<>();
+                    String str;
                     for (int i = 1; i <= cols; i++) {
                         str = results.getString(i);
                         row.add(str);
@@ -267,7 +266,8 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
                 _resultsPanel.repaint();
                 tb.setText("OK");
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             _resultsPanel.removeAll();
             JTextArea tb = new JTextArea();
             tb.setSize(_resultsPanel.getSize());
@@ -277,20 +277,21 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
             _resultsPanel.validate();
             _resultsPanel.repaint();
             tb.setText(e.toString());
-        } finally {
+        }
+        finally {
             if (results != null) {
                 try {
                     results.close();
-                } catch (SQLException sqlEx) {
+                }
+                catch (SQLException sqlEx) {
                 } // ignore
-                results = null;
             }
             if (stmt != null) {
                 try {
                     stmt.close();
-                } catch (SQLException sqlEx) {
+                }
+                catch (SQLException sqlEx) {
                 } // ignore
-                stmt = null;
             }
         }
     }
@@ -307,19 +308,23 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
             // delete possible previous version of tables
             try {
                 stmt.execute("DROP TABLE Lekari");
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
             }
             try {
                 stmt.execute("DROP TABLE Pacienti");
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
             }
             try {
                 stmt.execute("DROP TABLE Diagnozy");
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
             }
             try {
                 stmt.execute("DROP TABLE Leky");
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
             }
 
             // create tables
@@ -365,15 +370,17 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
             stmt.execute("INSERT INTO leky VALUES (2, 'balmandol', 2) VALID PERIOD [2005-01-03 - 2005-01-13]");
             stmt.execute("INSERT INTO leky VALUES (4, 'oxafirol', 3) VALID PERIOD [2004-12-06 - 2005-01-06]");
             stmt.execute("INSERT INTO leky VALUES (4, 'paralen', 4) VALID PERIOD [2004-12-01 - 2004-12-20]");
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.toString());
-        } finally {
+        }
+        finally {
             if (stmt != null) {
                 try {
                     stmt.close();
-                } catch (SQLException sqlEx) {
+                }
+                catch (SQLException sqlEx) {
                 } // ignore
-                stmt = null;
             }
         }
     }
@@ -397,7 +404,7 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
         c.weightx = 1;
         c.weighty = 0.1;
 
-        _queriesList = new JList();
+        _queriesList = new JList<>();
         _queriesList.addListSelectionListener(this);
         _queriesList.setListData(_queriesNames);
 
@@ -471,17 +478,24 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
 
     /**
      * Release used resources
+     *
+     * @throws java.lang.Throwable
      */
     @Override
     protected void finalize() throws Throwable {
-        close();
+        try {
+            close();
+        }
+        finally {
+            super.finalize();
+        }
     }
 
     /**
      * Show dialog for database connection
      */
     private void showConnectionDialog() {
-        // @author  	Marek Rychly <rychly@fit.vutbr.cz>
+        // @author  	Marek Rychly <marek.rychly@gmail.com>
         Object[] options = {"HSQL", "MySQL", "Oracle"};
         String databaseType = (String) JOptionPane.showInputDialog(this,
                 "Zvolte typ databáze",
@@ -495,16 +509,18 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
         BufferedReader fr;
         String line = null;
         if (databaseType.equals("HSQL")) {
-            // @author  	Marek Rychly <rychly@fit.vutbr.cz>
+            // @author  	Marek Rychly <marek.rychly@gmail.com>
             line = "jdbc:hsqldb:mem:tsql2test";
         }
         try {
             fr = new BufferedReader(new FileReader("data.dat"));
             line = fr.readLine();
             fr.close();
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             // ignore
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             // ignore
         }
 
@@ -517,7 +533,8 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
                 fw = new FileWriter("data.dat");
                 fw.write(url);
                 fw.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 // ignore
             }
 
@@ -527,29 +544,35 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
 
     /**
      * Connect to database
+     *
      * @param databaseType Type of database (MySQL | Oracle)
      * @param url Connection URL
      */
     private void connect(String databaseType, String url) {
         try {
-            if (databaseType.equals("MySQL")) {
-                // get MySQL connection
-                Class.forName("com.mysql.jdbc.Driver");
-                // create TSQL connection from MySQL connection
-                _con = new TSQL2Adapter(DriverManager.getConnection(url));
-            } else if (databaseType.equals("HSQL")) {
-                // get HSQL connection
-                Class.forName("org.hsqldb.jdbcDriver");
-                // create TSQL connection from HSQL connection
-                _con = new TSQL2Adapter(DriverManager.getConnection(url));
-            } else {
-                // get Oracle connection
-                OracleDataSource ods = new OracleDataSource();
-                ods.setURL(url);
-                // create TSQL connection from Oracle connection
-                _con = new TSQL2Adapter(ods.getConnection());
+            switch (databaseType) {
+                case "MySQL":
+                    // get MySQL connection
+                    Class.forName("com.mysql.jdbc.Driver");
+                    // create TSQL connection from MySQL connection
+                    _con = new TSQL2Adapter(DriverManager.getConnection(url));
+                    break;
+                case "HSQL":
+                    // get HSQL connection
+                    Class.forName("org.hsqldb.jdbcDriver");
+                    // create TSQL connection from HSQL connection
+                    _con = new TSQL2Adapter(DriverManager.getConnection(url));
+                    break;
+                default:
+                    // get Oracle connection
+                    OracleDataSource ods = new OracleDataSource();
+                    ods.setURL(url);
+                    // create TSQL connection from Oracle connection
+                    _con = new TSQL2Adapter(ods.getConnection());
+                    break;
             }
-        } catch (Exception e) {
+        }
+        catch (ClassNotFoundException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
@@ -562,7 +585,8 @@ public class App extends JFrame implements ActionListener, ListSelectionListener
             if ((null != _con) && (_con.isValid(1000))) {
                 _con.close();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }

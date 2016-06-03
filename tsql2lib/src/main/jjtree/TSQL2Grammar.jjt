@@ -2,11 +2,11 @@
  * FILE: TSQL2Grammar.jjt (derived from SqlSqcipt.jjt)                   *
  *                                                                       *
  * DESCRIPTION: This file contains grammar for TSQL2Adapter JDBC adapter *
- *				from tsql2lib library. tsql2lib is library implementing  *
- *				JDBC API to add support of temporal data to relational   *
+ *		from tsql2lib library. tsql2lib is library implementing  *
+ *		JDBC API to add support of temporal data to relational   *
  *              database created as masters thesis work by Jiri Tomek    *
  *              as Brno University of Technology - Faculty of            *
- *				Information Technology.                                  *
+ *		Information Technology.                                  *
  *                                                                       *
  * HISTORY: 07-APR-1997 Created  Ramanathan .S (sramji@rocketmail.com)   *
  *          11-JAN-2003 modified Guido Draheim (guidod@gmx.de)           *
